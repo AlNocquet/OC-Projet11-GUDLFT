@@ -1,7 +1,16 @@
-bin
-include
-lib
+# Virtual environment
+venv/
+bin/
+include/
+lib/
 .Python
-tests/
+
+# Environment config
 .envrc
-__pycache__
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Pytest cache
+.pytest_cache/
