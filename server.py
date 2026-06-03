@@ -28,7 +28,7 @@ def index():
 
 @app.route('/showSummary', methods=['POST'])
 def showSummary():
-    matching_clubs = [ # ---------------------------------------------------------------> bug 1
+    matching_clubs = [ # ---------------------------------------------------------------> bug 1 (sécurisation du flux d’identification)
         club for club in clubs
         if club['email'] == request.form['email']
     ]
@@ -71,8 +71,16 @@ def purchasePlaces():
 
     placesRequired = int(request.form['places'])
 
-    if placesRequired > int(club['points']): # ----------------------------------------> bug 2
+    if placesRequired > int(club['points']): # ----------------------------------------> bug 2 (validation métier du solde de points)
         flash('You do not have enough points.')
+        return render_template(
+            'booking.html',
+            club=club,
+            competition=competition
+        )
+
+    if placesRequired > int(competition['numberOfPlaces']): # -------------------------> bug 3 (validation métier de la capacité restante)
+        flash('There are not enough places available.')
         return render_template(
             'booking.html',
             club=club,
