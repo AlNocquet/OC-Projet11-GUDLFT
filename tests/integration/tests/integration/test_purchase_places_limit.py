@@ -1,7 +1,6 @@
 from server import app, clubs, competitions
 
 
-
 def get_club(name):
     return [club for club in clubs if club["name"] == name][0]
 
@@ -11,54 +10,58 @@ def get_competition(name):
 
 
 
-# Happy path : 
+# Happy path:
+# 12 places -> accepted
 
-def test_purchase_places_with_available_competition_places():
+
+def test_purchase_places_with_12_places_limit():
     client = app.test_client()
 
     club = get_club("Simply Lift")
-    competition = get_competition("Fall Classic")
+    competition = get_competition("Spring Festival")
 
     club["points"] = "25"
-    competition["numberOfPlaces"] = "13"
+    competition["numberOfPlaces"] = "25"
 
     response = client.post(
         "/purchasePlaces",
         data={
             "club": "Simply Lift",
-            "competition": "Fall Classic",
-            "places": "5",
+            "competition": "Spring Festival",
+            "places": "12",
         },
     )
 
     assert response.status_code == 200
     assert b"Great-booking complete!" in response.data
-    assert int(club["points"]) == 20
-    assert int(competition["numberOfPlaces"]) == 8
+    assert int(club["points"]) == 13
+    assert int(competition["numberOfPlaces"]) == 13
 
 
 
-# Sad path :
+# Sad path:
+# 13 places -> rejected
 
-def test_purchase_places_with_more_places_than_available():
+
+def test_purchase_places_with_more_than_12_places():
     client = app.test_client()
 
     club = get_club("Simply Lift")
-    competition = get_competition("Fall Classic")
+    competition = get_competition("Spring Festival")
 
     club["points"] = "25"
-    competition["numberOfPlaces"] = "8"
+    competition["numberOfPlaces"] = "25"
 
     response = client.post(
         "/purchasePlaces",
         data={
             "club": "Simply Lift",
-            "competition": "Fall Classic",
-            "places": "10",
+            "competition": "Spring Festival",
+            "places": "13",
         },
     )
 
     assert response.status_code == 200
-    assert b"There are not enough places available." in response.data
+    assert b"You cannot reserve more than 12 places." in response.data
     assert int(club["points"]) == 25
-    assert int(competition["numberOfPlaces"]) == 8
+    assert int(competition["numberOfPlaces"]) == 25
