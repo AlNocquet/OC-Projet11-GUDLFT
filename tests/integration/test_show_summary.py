@@ -1,4 +1,4 @@
-from server import app
+from server import app, clubs, competitions
 
 # Happy path :
 # email valide
@@ -7,6 +7,9 @@ from server import app
 
 def test_show_summary_with_valid_email():
     client = app.test_client()
+
+    clubs[0]["points"] = "13"
+    competitions[0]["numberOfPlaces"] = "25"
 
     response = client.post(
         "/showSummary",
