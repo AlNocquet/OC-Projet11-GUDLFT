@@ -71,6 +71,15 @@ def purchasePlaces():
 
     placesRequired = int(request.form['places'])
 
+
+    if placesRequired > 12: # ----------------------------------------------------------> bug 4 (validation métier "no more than 12 places")
+        flash('You cannot reserve more than 12 places.')
+        return render_template(
+            'booking.html',
+            club=club,
+            competition=competition
+        )
+
     if placesRequired > int(club['points']): # ----------------------------------------> bug 2 (validation métier du solde de points)
         flash('You do not have enough points.')
         return render_template(
