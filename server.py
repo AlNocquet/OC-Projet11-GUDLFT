@@ -39,7 +39,12 @@ def showSummary():
         return render_template('index.html')
 
     club = matching_clubs[0]
-    return render_template('welcome.html', club=club, competitions=competitions)
+    return render_template( # ----------------------------------------------------------> feature 7 (affichage du tableau des points des clubs)
+        'welcome.html',
+        club=club,
+        competitions=competitions,
+        clubs=clubs
+    )
 
 
 @app.route('/book/<competition>/<club>')
@@ -56,8 +61,9 @@ def book(competition, club):
         flash("You cannot book places for a past competition.")
         return render_template(
             'welcome.html',
-            club=foundClub,
-            competitions=competitions
+            club=club,
+            competitions=competitions,
+            clubs=clubs
         )
 
     return render_template(
@@ -96,7 +102,7 @@ def purchasePlaces():
         )
 
     if placesRequired > int(club['points']): # ----------------------------------------> bug 2 (validation métier du solde de points)
-        flash('You do not have enough points.')
+        flash('You do not have enough points.')                                        # bug 6 (mise à jour du solde de points après réservation)
         return render_template(
             'booking.html',
             club=club,
@@ -112,7 +118,7 @@ def purchasePlaces():
         )
 
     competition['numberOfPlaces'] = (
-        int(competition['numberOfPlaces']) - placesRequired
+        int(competition['numberOfPlaces']) - placesRequired # ------------------------> bug 6 (mise à jour du solde de points après réservation)
     )
 
     club['points'] = (
@@ -124,11 +130,12 @@ def purchasePlaces():
     return render_template(
         'welcome.html',
         club=club,
-        competitions=competitions
+        competitions=competitions,
+        clubs=clubs
     )
 
 
-# TODO: Add route for points display
+# TODO: Add route for points display # ------------------------------------------------> feature 7 (affichage du tableau des points des clubs)
 
 
 @app.route('/logout')
