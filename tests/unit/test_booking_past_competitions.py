@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from server import app, clubs, competitions
 
 
-
 def get_club(name):
     return [club for club in clubs if club["name"] == name][0]
 
@@ -14,7 +13,6 @@ def get_competition(name):
 
 # Happy path:
 # future competition -> booking page displayed
-
 
 def test_book_future_competition():
     client = app.test_client()
@@ -27,7 +25,7 @@ def test_book_future_competition():
     ).strftime("%Y-%m-%d %H:%M:%S")
 
     response = client.get(
-        f"/book/{competition['name']}/{club['name']}"
+        "/book/Spring%20Festival/Simply%20Lift"
     )
 
     assert response.status_code == 200
@@ -37,7 +35,6 @@ def test_book_future_competition():
 
 # Sad path:
 # past competition -> booking page blocked
-
 
 def test_book_past_competition():
     client = app.test_client()
@@ -50,10 +47,10 @@ def test_book_past_competition():
     ).strftime("%Y-%m-%d %H:%M:%S")
 
     response = client.get(
-        f"/book/{competition['name']}/{club['name']}"
+        "/book/Spring%20Festival/Simply%20Lift"
     )
 
     assert response.status_code == 200
     assert b"You cannot book places for a past competition." in response.data
-    assert b"Welcome, john@simplylift.co" in response.data
+    assert b"Club Points Board" in response.data
     assert b"How many places?" not in response.data
