@@ -61,7 +61,7 @@ def book(competition, club):
         flash("You cannot book places for a past competition.")
         return render_template(
             'welcome.html',
-            club=club,
+            club=foundClub,
             competitions=competitions,
             clubs=clubs
         )
@@ -93,7 +93,7 @@ def purchasePlaces():
     placesRequired = int(request.form['places'])
 
 
-    if placesRequired > 12: # ----------------------------------------------------------> bug 4 (validation métier "no more than 12 places")
+    if placesRequired > 12: # ---------------------------------------------------------> bug 4 (validation métier "no more than 12 places")
         flash('You cannot reserve more than 12 places.')
         return render_template(
             'booking.html',
@@ -101,8 +101,8 @@ def purchasePlaces():
             competition=competition
         )
 
-    if placesRequired > int(club['points']): # ----------------------------------------> bug 2 (validation métier du solde de points)
-        flash('You do not have enough points.')                                        # bug 6 (mise à jour du solde de points après réservation)
+    if placesRequired > int(club['points']): # ----------------------------------------> bug 2 (validation du solde de points avant réservation)
+        flash('You do not have enough points.')
         return render_template(
             'booking.html',
             club=club,
@@ -117,12 +117,15 @@ def purchasePlaces():
             competition=competition
         )
 
+
+    # Mise à jour des places restantes dans la compétition
     competition['numberOfPlaces'] = (
-        int(competition['numberOfPlaces']) - placesRequired # ------------------------> bug 6 (mise à jour du solde de points après réservation)
+        int(competition['numberOfPlaces']) - placesRequired
     )
 
-    club['points'] = (
-        int(club['points']) - placesRequired
+
+    club['points'] = ( 
+        int(club['points']) - placesRequired # --------------------------------------> bug 6 (déduction des points du club après réservation validée)
     )
 
     flash('Great-booking complete!')
