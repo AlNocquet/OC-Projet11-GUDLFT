@@ -141,6 +141,11 @@ def purchasePlaces():
 # TODO: Add route for points display # ------------------------------------------------> feature 7 (affichage du tableau des points des clubs)
 
 
+@app.route('/ping')
+def ping():
+    return "pong", 200
+
+    
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
