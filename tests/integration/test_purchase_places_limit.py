@@ -62,6 +62,54 @@ def test_purchase_places_with_more_than_12_places():
     )
 
     assert response.status_code == 200
-    assert b"You cannot reserve more than 12 places." in response.data
+    assert b"You must reserve between 1 and 12 places." in response.data
+    assert int(club["points"]) == 25
+    assert int(competition["numberOfPlaces"]) == 25
+
+
+def test_purchase_places_with_zero_place():
+    client = app.test_client()
+
+    club = get_club("Simply Lift")
+    competition = get_competition("Spring Festival")
+
+    club["points"] = "25"
+    competition["numberOfPlaces"] = "25"
+
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "club": "Simply Lift",
+            "competition": "Spring Festival",
+            "places": "0",
+        },
+    )
+
+    assert response.status_code == 200
+    assert b"You must reserve between 1 and 12 places." in response.data
+    assert int(club["points"]) == 25
+    assert int(competition["numberOfPlaces"]) == 25
+
+
+def test_purchase_places_with_negative_place():
+    client = app.test_client()
+
+    club = get_club("Simply Lift")
+    competition = get_competition("Spring Festival")
+
+    club["points"] = "25"
+    competition["numberOfPlaces"] = "25"
+
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            "club": "Simply Lift",
+            "competition": "Spring Festival",
+            "places": "-1",
+        },
+    )
+
+    assert response.status_code == 200
+    assert b"You must reserve between 1 and 12 places." in response.data
     assert int(club["points"]) == 25
     assert int(competition["numberOfPlaces"]) == 25
