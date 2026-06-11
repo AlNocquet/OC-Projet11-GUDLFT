@@ -93,13 +93,14 @@ def purchasePlaces():
     placesRequired = int(request.form['places'])
 
 
-    if placesRequired > 12: # ---------------------------------------------------------> bug 4 (validation métier "no more than 12 places")
-        flash('You cannot reserve more than 12 places.')
+    if placesRequired < 1 or placesRequired > 12:
+        flash('You must reserve between 1 and 12 places.') #----------------------------> bug 4 (validation métier "no more than 12 places (limi)")
         return render_template(
             'booking.html',
             club=club,
             competition=competition
         )
+
 
     if placesRequired > int(club['points']): # ----------------------------------------> bug 2 (validation du solde de points avant réservation)
         flash('You do not have enough points.')
@@ -125,7 +126,7 @@ def purchasePlaces():
 
 
     club['points'] = ( 
-        int(club['points']) - placesRequired # --------------------------------------> bug 6 (déduction des points du club après réservation validée)
+        int(club['points']) - placesRequired # ----------------------------------------> bug 6 (déduction des points du club après réservation validée)
     )
 
     flash('Great-booking complete!')
