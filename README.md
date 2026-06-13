@@ -49,3 +49,57 @@
     We also like to show how well we're testing, so there's a module called 
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
 
+
+
+### Test Commands
+
+Run the complete test suite:
+
+```bash
+python -m pytest -v
+```
+
+### Test Structure
+
+The project includes:
+
+- Unit tests (fixtures, monkeypatch and mocks)
+- Integration tests (Flask routes and HTTP responses)
+- Functional tests (complete user journey)
+
+### Coverage Report
+
+Generate a terminal coverage report:
+
+```bash
+python -m pytest --cov=server --cov-report=term-missing
+```
+
+Generate an HTML coverage report:
+
+```bash
+python -m pytest --cov=server --cov-report=html
+```
+
+Open:
+
+```text
+htmlcov/index.html
+```
+
+to view the detailed report.
+
+Current result:
+
+- 24 tests passing
+- 100% coverage on server.py
+
+### Load Testing
+
+Run Locust:
+
+```bash
+locust -f locustfile.py
+```
+
+The load test simulates a complete booking workflow through the application.
