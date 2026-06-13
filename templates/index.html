@@ -7,6 +7,17 @@
 <body>
     <h1>Welcome to the GUDLFT Registration Portal!</h1>
 
+    <h3>Club Points Board</h3>
+
+        <ul>
+        {% for club_item in clubs %}
+            <li>
+                {{ club_item['name'] }} :
+                {{ club_item['points'] }} points
+            </li>
+        {% endfor %}
+        </ul>
+
     {% with messages = get_flashed_messages() %}
     {% if messages %}
         <ul>
@@ -24,3 +35,6 @@
         <button type="submit">Enter</button>
     </form>
 </body>
+
+
+</html>

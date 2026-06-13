@@ -24,12 +24,17 @@ clubs = loadClubs()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template(
+        'index.html',
+        clubs=clubs
+    )
 
 
 @app.route('/showSummary', methods=['POST'])
 def showSummary():
-    matching_clubs = [ # ---------------------------------------------------------------> bug 1 (sécurisation du flux d’identification)
+    
+    # bug 1 (sécurisation du flux d’identification)
+    matching_clubs = [
         club for club in clubs
         if club['email'] == request.form['email']
     ]
@@ -38,8 +43,9 @@ def showSummary():
         flash("Sorry, that email was not found.")
         return render_template('index.html')
 
+    # feature 7 (affichage du tableau des points des clubs) + template balises Nav
     club = matching_clubs[0]
-    return render_template( # ----------------------------------------------------------> feature 7 (affichage du tableau des points des clubs)
+    return render_template(
         'welcome.html',
         club=club,
         competitions=competitions,
@@ -55,9 +61,10 @@ def book(competition, club):
     competition_date = datetime.strptime(
         foundCompetition['date'],
         "%Y-%m-%d %H:%M:%S"
-    )
+        )
 
-    if competition_date < datetime.now(): # -------------------------------------------> bug 5 (validation temporelle de la réservation)
+    # bug 5 (validation temporelle de la réservation)
+    if competition_date < datetime.now():
         flash("You cannot book places for a past competition.")
         return render_template(
             'welcome.html',
@@ -92,17 +99,17 @@ def purchasePlaces():
 
     placesRequired = int(request.form['places'])
 
-
+    # bug 4 (validation métier "no more than 12 places")
     if placesRequired < 1 or placesRequired > 12:
-        flash('You must reserve between 1 and 12 places.') #----------------------------> bug 4 (validation métier "no more than 12 places (limi)")
+        flash('You must reserve between 1 and 12 places.') # bug 4 (validation métier "no more than 12 places")
         return render_template(
             'booking.html',
             club=club,
             competition=competition
         )
 
-
-    if placesRequired > int(club['points']): # ----------------------------------------> bug 2 (validation du solde de points avant réservation)
+    # bug 2 (validation du solde de points avant réservation)
+    if placesRequired > int(club['points']):
         flash('You do not have enough points.')
         return render_template(
             'booking.html',
@@ -110,7 +117,8 @@ def purchasePlaces():
             competition=competition
         )
 
-    if placesRequired > int(competition['numberOfPlaces']): # -------------------------> bug 3 (validation métier de la capacité restante)
+    # bug 3 (validation métier de la capacité restante)
+    if placesRequired > int(competition['numberOfPlaces']):
         flash('There are not enough places available.')
         return render_template(
             'booking.html',
@@ -124,9 +132,9 @@ def purchasePlaces():
         int(competition['numberOfPlaces']) - placesRequired
     )
 
-
+    # bug 6 (déduction des points du club après réservation validée)
     club['points'] = ( 
-        int(club['points']) - placesRequired # ----------------------------------------> bug 6 (déduction des points du club après réservation validée)
+        int(club['points']) - placesRequired
     )
 
     flash('Great-booking complete!')
@@ -137,9 +145,6 @@ def purchasePlaces():
         competitions=competitions,
         clubs=clubs
     )
-
-
-# TODO: Add route for points display # ------------------------------------------------> feature 7 (affichage du tableau des points des clubs)
 
 
 @app.route('/ping')
