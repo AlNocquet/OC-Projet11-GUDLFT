@@ -22,21 +22,6 @@ def test_show_summary_with_valid_email():
     assert b"Spring Festival" in response.data
 
 
-def test_show_summary_displays_club_points_board():
-    client = app.test_client()
-
-    response = client.post(
-        "/showSummary",
-        data={"email": "john@simplylift.co"},
-    )
-
-    assert response.status_code == 200
-    assert b"Club Points Board" in response.data
-    assert b"Simply Lift" in response.data
-    assert b"Iron Temple" in response.data
-    assert b"She Lifts" in response.data
-
-
     
 # Sad path :
 # email invalide

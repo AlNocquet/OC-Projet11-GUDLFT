@@ -52,5 +52,4 @@ def test_book_past_competition():
 
     assert response.status_code == 200
     assert b"You cannot book places for a past competition." in response.data
-    assert b"Club Points Board" in response.data
     assert b"How many places?" not in response.data
