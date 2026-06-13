@@ -1,35 +1,27 @@
-from server import app, clubs, competitions
-
-
-def get_club(name):
+def get_club(clubs, name):
     return [club for club in clubs if club["name"] == name][0]
 
 
-def get_competition(name):
+def get_competition(competitions, name):
     return [competition for competition in competitions if competition["name"] == name][0]
-
 
 
 # Happy path:
 # 12 places -> accepted
 
 
-def test_purchase_places_with_12_places_limit():
-    client = app.test_client()
+def test_purchase_places_with_12_places_limit(client, mocked_data):
+    clubs, competitions = mocked_data
 
-    club = get_club("Simply Lift")
-    competition = get_competition("Spring Festival")
+    club = get_club(clubs, "Simply Lift")
+    competition = get_competition(competitions, "Spring Festival")
 
     club["points"] = "25"
     competition["numberOfPlaces"] = "25"
 
     response = client.post(
         "/purchasePlaces",
-        data={
-            "club": "Simply Lift",
-            "competition": "Spring Festival",
-            "places": "12",
-        },
+        data={"club": "Simply Lift", "competition": "Spring Festival", "places": "12"},
     )
 
     assert response.status_code == 200
@@ -38,27 +30,22 @@ def test_purchase_places_with_12_places_limit():
     assert int(competition["numberOfPlaces"]) == 13
 
 
-
 # Sad path:
 # 13 places -> rejected
 
 
-def test_purchase_places_with_more_than_12_places():
-    client = app.test_client()
+def test_purchase_places_with_more_than_12_places(client, mocked_data):
+    clubs, competitions = mocked_data
 
-    club = get_club("Simply Lift")
-    competition = get_competition("Spring Festival")
+    club = get_club(clubs, "Simply Lift")
+    competition = get_competition(competitions, "Spring Festival")
 
     club["points"] = "25"
     competition["numberOfPlaces"] = "25"
 
     response = client.post(
         "/purchasePlaces",
-        data={
-            "club": "Simply Lift",
-            "competition": "Spring Festival",
-            "places": "13",
-        },
+        data={"club": "Simply Lift", "competition": "Spring Festival", "places": "13"},
     )
 
     assert response.status_code == 200
@@ -67,22 +54,22 @@ def test_purchase_places_with_more_than_12_places():
     assert int(competition["numberOfPlaces"]) == 25
 
 
-def test_purchase_places_with_zero_place():
-    client = app.test_client()
+# Sad path:
+# 0 place -> rejected
 
-    club = get_club("Simply Lift")
-    competition = get_competition("Spring Festival")
+
+def test_purchase_places_with_zero_place(client, mocked_data):
+    clubs, competitions = mocked_data
+
+    club = get_club(clubs, "Simply Lift")
+    competition = get_competition(competitions, "Spring Festival")
 
     club["points"] = "25"
     competition["numberOfPlaces"] = "25"
 
     response = client.post(
         "/purchasePlaces",
-        data={
-            "club": "Simply Lift",
-            "competition": "Spring Festival",
-            "places": "0",
-        },
+        data={"club": "Simply Lift", "competition": "Spring Festival", "places": "0"},
     )
 
     assert response.status_code == 200
@@ -91,22 +78,22 @@ def test_purchase_places_with_zero_place():
     assert int(competition["numberOfPlaces"]) == 25
 
 
-def test_purchase_places_with_negative_place():
-    client = app.test_client()
+# Sad path:
+# negative value -> rejected
 
-    club = get_club("Simply Lift")
-    competition = get_competition("Spring Festival")
+
+def test_purchase_places_with_negative_place(client, mocked_data):
+    clubs, competitions = mocked_data
+
+    club = get_club(clubs, "Simply Lift")
+    competition = get_competition(competitions, "Spring Festival")
 
     club["points"] = "25"
     competition["numberOfPlaces"] = "25"
 
     response = client.post(
         "/purchasePlaces",
-        data={
-            "club": "Simply Lift",
-            "competition": "Spring Festival",
-            "places": "-1",
-        },
+        data={"club": "Simply Lift", "competition": "Spring Festival", "places": "-1"},
     )
 
     assert response.status_code == 200

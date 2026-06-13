@@ -1,19 +1,11 @@
-from server import app, clubs, competitions
-
-# Happy path :
-# email valide
-# → accès welcome
+# Happy path:
+# valid email -> summary page
 
 
-def test_show_summary_with_valid_email():
-    client = app.test_client()
-
-    clubs[0]["points"] = "13"
-    competitions[0]["numberOfPlaces"] = "25"
-
+def test_show_summary_with_valid_email(client):
     response = client.post(
         "/showSummary",
-        data={"email": "john@simplylift.co"}
+        data={"email": "john@simplylift.co"},
     )
 
     assert response.status_code == 200
@@ -22,19 +14,14 @@ def test_show_summary_with_valid_email():
     assert b"Spring Festival" in response.data
 
 
-    
-# Sad path :
-# email invalide
-# → message erreur
-# → pas crash
+# Sad path:
+# invalid email -> error message, no crash
 
 
-def test_show_summary_with_unknown_email():
-    client = app.test_client()
-
+def test_show_summary_with_unknown_email(client):
     response = client.post(
         "/showSummary",
-        data={"email": "unknown@email.com"}
+        data={"email": "unknown@email.com"},
     )
 
     assert response.status_code == 200
@@ -42,12 +29,10 @@ def test_show_summary_with_unknown_email():
     assert b"Sorry, that email was not found." in response.data
 
 
-def test_show_summary_with_empty_email():
-    client = app.test_client()
-
+def test_show_summary_with_empty_email(client):
     response = client.post(
         "/showSummary",
-        data={"email": ""}
+        data={"email": ""},
     )
 
     assert response.status_code == 200

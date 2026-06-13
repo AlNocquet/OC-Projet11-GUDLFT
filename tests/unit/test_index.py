@@ -1,9 +1,4 @@
-from server import app
-
-
-def test_index_displays_login_page():
-    client = app.test_client()
-
+def test_index_displays_login_page(client):
     response = client.get("/")
 
     assert response.status_code == 200
@@ -13,18 +8,7 @@ def test_index_displays_login_page():
     assert b"Enter" in response.data
 
 
-def test_index_displays_login_page():
-    client = app.test_client()
-
-    response = client.get("/")
-
-    assert response.status_code == 200
-    assert b"Welcome to the GUDLFT Registration Portal!" in response.data
-
-
-def test_index_displays_public_points_board():
-    client = app.test_client()
-
+def test_index_displays_public_points_board(client):
     response = client.get("/")
 
     assert response.status_code == 200
